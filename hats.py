@@ -8,14 +8,11 @@ import re
 def exist_check(location,name):
     folder = location
     while True:
-        try:
-            os.stat(folder)
+        if os.path.isdir(folder):
             break
-        except FileNotFoundError:
-            if name == 'Steam':
-                return False
+        else:
             folder = folder_select(name)
-    return True
+    return folder
 
 def folder_select(name):
     root = Tk()
@@ -26,29 +23,36 @@ def folder_select(name):
                                      title='Select {} directory.'.format(name)
                                      )
     root.destroy()
+    if not folder:
+        exit(0)
     return folder
 
-def main():
+def get_steam_dir():
     steam_reg_key = OpenKey(HKLM,'SOFTWARE\\WOW6432Node\\Valve\\Steam')
     steam_dir = EnumValue(steam_reg_key,1)[1]
     CloseKey(steam_reg_key)
-    if !exist_check(steam_dir,'Steam'):
+    return steam_dir
+
+def main():
+    steam_dir = get_steam_dir()
+    if not os.path.isdir(steam_dir):
         game_dir = folder_select('Duck Game')
     else:
         game_dir = '{}\\steamapps\\common\\Duck Game'.format(steam_dir)
-        exist_check('{}\\DuckGame.exe'.format(game_dir),'Duck Game')
+        game_dir = exist_check(game_dir,'Duck Game')
 
     hat_dir = '{}\\hats'.format(os.getcwd())
-    exist_check(hat_dir,'hat')
+    hat_dir = exist_check(hat_dir,'hat')
 
     for f in os.listdir(game_dir):
         if re.match('.*\.hat',f) or f == 'hatcredits.txt':
-            os.remove(f)
+            os.remove('{}\\{}'.format(game_dir,f))
     for f in os.listdir(hat_dir):
         srcfile = '{}\\{}'.format(hat_dir,f)
         copy(srcfile,game_dir)
 
     print('Your new hats should now be ready! If they\'re not, go yell at sgtlaggy.')
+    input('Press ENTER to exit.')
 
 if __name__ == '__main__':
     main()
