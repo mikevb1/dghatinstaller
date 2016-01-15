@@ -28,14 +28,19 @@ def folder_select(name):
     return folder
 
 def get_steam_dir():
-    steam_reg_key = OpenKey(HKLM,'SOFTWARE\\WOW6432Node\\Valve\\Steam')
+    try:
+        steam_reg_key = OpenKey(HKLM,'SOFTWARE\\WOW6432Node\\Valve\\Steam')
+    except FileNotFoundError:
+        steam_reg_key = OpenKey(HKLM,'SOFTWARE\\Valve\\Steam')
+    except:
+        return
     steam_dir = EnumValue(steam_reg_key,1)[1]
     CloseKey(steam_reg_key)
     return steam_dir
 
 def main():
     steam_dir = get_steam_dir()
-    if not os.path.isdir(steam_dir):
+    if not steam_dir:
         game_dir = folder_select('Duck Game')
     else:
         game_dir = '{}\\steamapps\\common\\Duck Game'.format(steam_dir)
@@ -51,7 +56,7 @@ def main():
         srcfile = '{}\\{}'.format(hat_dir,f)
         copy(srcfile,game_dir)
 
-    print('Your new hats should now be ready! If they\'re not, go yell at sgtlaggy.')
+    print('Your new hats should now be ready!')
     input('Press ENTER to exit.')
 
 if __name__ == '__main__':

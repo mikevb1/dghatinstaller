@@ -1,5 +1,3 @@
-hats.exe WILL NOT work on 32-bit installations of Windows! (as of right now)
-
 Using hats.exe will remove any hats you currently have and will copy the ones from this pack over.
 hats.exe will work only if you have Duck Game installed in Steam's install directory.
 
@@ -12,4 +10,7 @@ You will only be asked to select your Duck Game install directory or the folder 
 
 any folder\
             hats\
+                 hat1.hat
+                 hat2.hat
+                 ...
             hats.exe
