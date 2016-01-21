@@ -49,12 +49,19 @@ def main():
     hat_dir = '{}\\hats'.format(os.getcwd())
     hat_dir = exist_check(hat_dir,'hat')
 
+    log = open('hats.log','w')
+    log.write('Removing files:\n')
     for f in os.listdir(game_dir):
         if re.match('.*\.hat',f) or f == 'hatcredits.txt':
             os.remove('{}\\{}'.format(game_dir,f))
+            log.write('{}\\{}'.format(game_dir,f) + '\n')
+    log.write('\nCopying files:\n')
     for f in os.listdir(hat_dir):
         srcfile = '{}\\{}'.format(hat_dir,f)
-        copy(srcfile,game_dir)
+        destfile = '{}\\{}'.format(game_dir,f)
+        copy(srcfile,destfile)
+        log.write(srcfile + ' -> ' + destfile + '\n')
+    log.close()
 
     print('Your new hats should now be ready!')
     input('Press ENTER to exit.')
