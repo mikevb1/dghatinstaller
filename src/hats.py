@@ -1,7 +1,7 @@
 from winreg import OpenKey, EnumValue, CloseKey, HKEY_LOCAL_MACHINE as HKLM
 from shutil import copy2 as copy
-from tkinter import Tk, filedialog
-from sys import exit
+from tkinter import Tk, filedialog, messagebox
+from sys import argv, exit
 import os
 import re
 
@@ -28,6 +28,16 @@ def folder_select(name):
     if not folder:
         exit(0)
     return folder
+
+
+def done_box():
+    root = Tk()
+    root.withdraw()
+    messagebox.showinfo(argv[0],
+                        'All done.\nNew hats should be installed.'
+                        )
+    root.destroy()
+    exit(0)
 
 
 def get_steam_dir():
@@ -67,8 +77,7 @@ def main():
         log.write(srcfile + ' -> ' + destfile + '\n')
     log.close()
 
-    print('Your new hats should now be ready!')
-    input('Press ENTER to exit.')
+    done_box()
 
 if __name__ == '__main__':
     main()
