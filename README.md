@@ -14,3 +14,14 @@ any folder\
                  hat2.hat
                  ...
             hats.exe
+
+#Building
+To compile this to .exe, I use Pyinstaller.
+
+On first run:
+
+    pyinstaller -Fw hats.py
+
+After hats.spec has been created, and on subsequent builds:
+
+    pyinstaller hats.spec
