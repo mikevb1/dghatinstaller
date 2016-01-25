@@ -1,3 +1,4 @@
+"""Removes old hats in Duck Game directory, moves new ones over."""
 from winreg import OpenKey, EnumValue, CloseKey, HKEY_LOCAL_MACHINE as HKLM
 from shutil import copy2 as copy
 from tkinter import Tk, filedialog, messagebox
@@ -7,6 +8,15 @@ import re
 
 
 def exist_check(location, name):
+    """Check whether location exists and prompts for location if it does not.
+
+    Arguments:
+    location -- location of folder found relative to program or from registry
+    name -- name of folder, only used when location does not exist
+
+    Result:
+    Return valid folder path.
+    """
     folder = location
     while True:
         if os.path.isdir(folder):
@@ -17,6 +27,15 @@ def exist_check(location, name):
 
 
 def folder_select(name):
+    """Prompt for a new location if originally found location does not exist.
+
+    Arguments:
+    name -- name of folder, to be used in titlebar of window
+
+    Result:
+    Return folder user selects.
+    Exit if user presses 'Cancel' or closes window.
+    """
     root = Tk()
     root.withdraw()
     folder = filedialog.askdirectory(parent=root,
@@ -31,6 +50,7 @@ def folder_select(name):
 
 
 def done_box():
+    """Display box saying program is done."""
     root = Tk()
     root.withdraw()
     messagebox.showinfo(argv[0],
@@ -41,6 +61,12 @@ def done_box():
 
 
 def get_steam_dir():
+    """Get steam install directory from registry.
+
+    Result:
+    Return Steam install directory.
+    Return nothing if neither registry key doesn't exist.
+    """
     try:
         steam_reg_key = OpenKey(HKLM, 'SOFTWARE\\WOW6432Node\\Valve\\Steam')
     except FileNotFoundError:
@@ -53,6 +79,7 @@ def get_steam_dir():
 
 
 def main():
+    """Remove any hats in game directory and copies new ones over."""
     steam_dir = get_steam_dir()
     if not steam_dir:
         game_dir = folder_select('Duck Game')
