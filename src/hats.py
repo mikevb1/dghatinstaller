@@ -66,7 +66,7 @@ def get_steam_dir():
 
     Result:
     Return Steam install directory.
-    Return nothing if neither registry key doesn't exist.
+    Return nothing if neither registry key exists.
     """
     try:
         steam_reg_key = OpenKey(HKLM, 'SOFTWARE\\WOW6432Node\\Valve\\Steam')
