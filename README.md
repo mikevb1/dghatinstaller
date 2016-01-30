@@ -1,3 +1,5 @@
+Icon file used with permission of its original creator, [/u/BeardedBears](https://www.reddit.com/user/BeardedBears).
+
 Using hats.exe will remove any hats you currently have and will copy the ones from this pack over.
 hats.exe will work only if you have Duck Game installed in Steam's install directory.
 
@@ -8,19 +10,19 @@ If you use hats.exe, you must have the following folder structure or you will be
 If a file selection box comes up, look at the titlebar to see what folder to select.
 You will only be asked to select your Duck Game install directory or the folder that contains the .hat files.
 
-any folder\
-            hats\
-                 hat1.hat
-                 hat2.hat
-                 ...
-            hats.exe
+    any folder\
+                hats\
+                     hat1.hat
+                     hat2.hat
+                     ...
+                hats.exe
 
 #Building
 To compile this to .exe, I use Pyinstaller.
 
-On first run:
+On first build:
 
-    pyinstaller -Fw hats.py
+    pyinstaller -Fwi icon.ico  hats.py
 
 After hats.spec has been created, and on subsequent builds:
 

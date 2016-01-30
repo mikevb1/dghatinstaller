@@ -8,6 +8,12 @@ import os
 import re
 
 
+try:
+    pass
+except Exception:
+    pass
+
+
 def exist_check(location, name):
     """Check whether location exists and prompts for location if it does not.
 
