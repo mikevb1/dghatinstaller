@@ -15,7 +15,7 @@ except Exception:
 
 
 def exist_check(location, name):
-    """Check whether location exists and prompts for location if it does not.
+    """Check whether location exists and prompt for location if it does not.
 
     Arguments:
     location -- location of folder found relative to program or from registry
@@ -34,7 +34,7 @@ def exist_check(location, name):
 
 
 def folder_select(name):
-    """Prompt for a new location if originally found location does not exist.
+    """Prompt to select folder.
 
     Arguments:
     name -- name of folder, to be used in titlebar of window
@@ -68,7 +68,16 @@ def done_box():
 
 
 def yes_no(text, title=argv[0]):
-    """Display box asking yes or no."""
+    """Display box asking yes or no.
+
+    Arguments:
+    text -- text displayed in box
+    title -- text displayed in titlebar
+
+    Result:
+    Return True or False
+    Terminates program if user does not select 'yes' or 'no'
+    """
     root = Tk()
     root.withdraw()
     yesno = messagebox.askyesno(title, text)
@@ -124,8 +133,9 @@ def main():
     with open(log_file, 'a') as log:
         log.write('Run Time: {}\n\n'.format(log_now))
         if yes_no("""Remove currently installed hats?
-                Any currently installed hats with names
-                matching new hats will be overwritten."""):
+
+        Any currently installed hats with names matching
+        new hats will be overwritten if you select no."""):
             log.write('Removing files:\n')
             for f in os.listdir(game_dir):
                 if re.match('.*\.hat', f) or f == 'hatcredits.txt':
