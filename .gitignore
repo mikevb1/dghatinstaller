@@ -1,5 +1,7 @@
 #hat dir for script test
 hats
+#too lazy to move out of repo to test stuff
+test.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

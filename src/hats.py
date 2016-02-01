@@ -8,12 +8,6 @@ import os
 import re
 
 
-try:
-    pass
-except Exception:
-    pass
-
-
 def exist_check(location, name):
     """Check whether location exists and prompt for location if it does not.
 
@@ -105,14 +99,9 @@ def get_steam_dir():
     return steam_dir
 
 
-def log_from_main(main=argv[0]):
+def log_name(main=argv[0]):
     """Take name of script and change extension to 'log'."""
-    log = list(main)
-    while log[-1] != '.':
-        log.pop()
-    log.append('log')
-    log = ''.join(log)
-    return log
+    return os.path.splitext(main)[0]+'.log'
 
 
 def main():
@@ -121,38 +110,37 @@ def main():
     if not steam_dir:
         game_dir = folder_select('Duck Game')
     else:
-        game_dir = '{}\\steamapps\\common\\Duck Game'.format(steam_dir)
+        game_dir = os.path.join(steam_dir, 'steamapps', 'common', 'Duck Game')
         game_dir = exist_check(game_dir, 'Duck Game')
 
-    hat_dir = '{}\\hats'.format(os.getcwd())
+    hat_dir = os.path.join(os.getcwd(), 'hats')
     hat_dir = exist_check(hat_dir, 'hat')
 
-    log_file = log_from_main()
+    log_file = log_name()
     log_now = dt.datetime.now().strftime('%d %b %Y - %H:%M:%S')
 
     with open(log_file, 'a') as log:
         log.write('Run Time: {}\n\n'.format(log_now))
-        if yes_no("""Remove currently installed hats?
-
-        Any currently installed hats with names matching
-        new hats will be overwritten if you select no."""):
+        if yes_no('Remove currently installed hats?\n\n'
+                  'Any currently installed hats with names matching\n'
+                  "new hats WILL be overwritten if you select 'No'."):
             log.write('Removing files:\n')
             for f in os.listdir(game_dir):
                 if re.match('.*\.hat', f) or f == 'hatcredits.txt':
-                    os.remove('{}\\{}'.format(game_dir, f))
-                    log.write('{}\\{}'.format(game_dir, f) + '\n')
+                    os.remove(os.path.join(game_dir, f))
+                    log.write(os.path.join(game_dir, f) + '\n')
         else:
             log.write('Not removing files.\n')
         log.write('\nCopying files:\n')
         exists = False
         for f in os.listdir(hat_dir):
-            srcfile = '{}\\{}'.format(hat_dir, f)
-            destfile = '{}\\{}'.format(game_dir, f)
+            srcfile = os.path.join(hat_dir, f)
+            destfile = os.path.join(game_dir, f)
             if os.path.isfile(destfile):
                 exists = True
             copy(srcfile, destfile)
             log.write('{} {} {}\n'.format(srcfile,
-                                          'overwriting' if exists else '->',
+                                          'OVERWRITING' if exists else '->',
                                           destfile))
             exists = False
         log.write('\n----------\n\n')
