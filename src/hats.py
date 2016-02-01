@@ -67,6 +67,17 @@ def done_box():
     exit(0)
 
 
+def yes_no(text, title=argv[0]):
+    """Display box asking yes or no."""
+    root = Tk()
+    root.withdraw()
+    yesno = messagebox.askyesno(title, text)
+    root.destroy()
+    if yesno not in [True, False]:
+        exit(0)
+    return yesno
+
+
 def get_steam_dir():
     """Get steam install directory from registry.
 
@@ -112,17 +123,28 @@ def main():
 
     with open(log_file, 'a') as log:
         log.write('Run Time: {}\n\n'.format(log_now))
-        log.write('Removing files:\n')
-        for f in os.listdir(game_dir):
-            if re.match('.*\.hat', f) or f == 'hatcredits.txt':
-                os.remove('{}\\{}'.format(game_dir, f))
-                log.write('{}\\{}'.format(game_dir, f) + '\n')
+        if yes_no("""Remove currently installed hats?
+                Any currently installed hats with names
+                matching new hats will be overwritten."""):
+            log.write('Removing files:\n')
+            for f in os.listdir(game_dir):
+                if re.match('.*\.hat', f) or f == 'hatcredits.txt':
+                    os.remove('{}\\{}'.format(game_dir, f))
+                    log.write('{}\\{}'.format(game_dir, f) + '\n')
+        else:
+            log.write('Not removing files.\n')
         log.write('\nCopying files:\n')
+        exists = False
         for f in os.listdir(hat_dir):
             srcfile = '{}\\{}'.format(hat_dir, f)
             destfile = '{}\\{}'.format(game_dir, f)
+            if os.path.isfile(destfile):
+                exists = True
             copy(srcfile, destfile)
-            log.write('{} -> {}\n'.format(srcfile, destfile))
+            log.write('{} {} {}\n'.format(srcfile,
+                                          'overwriting' if exists else '->',
+                                          destfile))
+            exists = False
         log.write('\n----------\n\n')
 
     done_box()
