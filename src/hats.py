@@ -4,6 +4,7 @@ from tkinter import Tk, filedialog, messagebox
 from shutil import copy2 as copy
 from sys import argv, exit
 import datetime as dt
+import logging as log
 import os
 import re
 
@@ -116,34 +117,37 @@ def main():
     hat_dir = os.path.join(os.getcwd(), 'hats')
     hat_dir = exist_check(hat_dir, 'hat')
 
-    log_file = log_name()
+    log.basicConfig(filename=log_name(),
+                    level=log.INFO,
+                    style='{',
+                    format='{message}'
+                    )
     log_now = dt.datetime.now().strftime('%d %b %Y - %H:%M:%S')
 
-    with open(log_file, 'a') as log:
-        log.write('Run Time: {}\n\n'.format(log_now))
-        if yes_no('Remove currently installed hats?\n\n'
-                  'Any currently installed hats with names matching\n'
-                  "new hats WILL be overwritten if you select 'No'."):
-            log.write('Removing files:\n')
-            for f in os.listdir(game_dir):
-                if re.match('.*\.hat', f) or f == 'hatcredits.txt':
-                    os.remove(os.path.join(game_dir, f))
-                    log.write(os.path.join(game_dir, f) + '\n')
-        else:
-            log.write('Not removing files.\n')
-        log.write('\nCopying files:\n')
+    log.info('Run Time: {}\n\n'.format(log_now))
+    if yes_no('Remove currently installed hats?\n\n'
+              'Any currently installed hats with names matching\n'
+              "new hats WILL be overwritten if you select 'No'."):
+        log.info('Removing files:')
+        for f in os.listdir(game_dir):
+            if re.match('.*\.hat', f) or f == 'hatcredits.txt':
+                os.remove(os.path.join(game_dir, f))
+                log.info(os.path.join(game_dir, f))
+    else:
+        log.info('Not removing files.')
+    log.info('\n\nCopying files:')
+    exists = False
+    for f in os.listdir(hat_dir):
+        srcfile = os.path.join(hat_dir, f)
+        destfile = os.path.join(game_dir, f)
+        if os.path.isfile(destfile):
+            exists = True
+        copy(srcfile, destfile)
+        log.info('{} {} {}'.format(srcfile,
+                                   'OVERWRITING' if exists else '->',
+                                   destfile))
         exists = False
-        for f in os.listdir(hat_dir):
-            srcfile = os.path.join(hat_dir, f)
-            destfile = os.path.join(game_dir, f)
-            if os.path.isfile(destfile):
-                exists = True
-            copy(srcfile, destfile)
-            log.write('{} {} {}\n'.format(srcfile,
-                                          'OVERWRITING' if exists else '->',
-                                          destfile))
-            exists = False
-        log.write('\n----------\n\n')
+    log.info('\n\n--------------------------------------------------\n\n')
 
     done_box()
 
