@@ -9,7 +9,7 @@ import os
 import re
 
 
-def exist_check(location, name):
+def exist_check(root, location, name):
     """Check whether location exists and prompt for location if it does not.
 
     Arguments:
@@ -24,11 +24,11 @@ def exist_check(location, name):
         if os.path.isdir(folder):
             break
         else:
-            folder = folder_select(name)
+            folder = folder_select(root, name)
     return folder
 
 
-def folder_select(name):
+def folder_select(root, name):
     """Prompt to select folder.
 
     Arguments:
@@ -38,31 +38,28 @@ def folder_select(name):
     Return folder user selects.
     Exit if user presses 'Cancel' or closes window.
     """
-    root = Tk()
-    root.withdraw()
     folder = filedialog.askdirectory(parent=root,
                                      initialdir='C:\\',
                                      mustexist=True,
                                      title='Select {} directory.'.format(name)
                                      )
-    root.destroy()
     if not folder:
+        root.destroy()
         exit(0)
     return folder
 
 
-def done_box():
+def done_box(root):
     """Display box saying program is done."""
-    root = Tk()
-    root.withdraw()
-    messagebox.showinfo(argv[0],
-                        'All done.\nNew hats should be installed.'
+    messagebox.showinfo(parent=root,
+                        title=argv[0],
+                        message='All done.\nNew hats should be installed.'
                         )
     root.destroy()
     exit(0)
 
 
-def yes_no(text, title=argv[0]):
+def yes_no(root, text, title=argv[0]):
     """Display box asking yes or no.
 
     Arguments:
@@ -73,11 +70,9 @@ def yes_no(text, title=argv[0]):
     Return True or False
     Terminates program if user does not select 'yes' or 'no'
     """
-    root = Tk()
-    root.withdraw()
     yesno = messagebox.askyesno(title, text)
-    root.destroy()
     if yesno not in [True, False]:
+        root.destroy()
         exit(0)
     return yesno
 
@@ -107,15 +102,18 @@ def log_name(main=argv[0]):
 
 def main():
     """Remove any hats in game directory and copies new ones over."""
+    root = Tk()
+    root.withdraw()
+
     steam_dir = get_steam_dir()
     if not steam_dir:
-        game_dir = folder_select('Duck Game')
+        game_dir = folder_select(root, 'Duck Game')
     else:
         game_dir = os.path.join(steam_dir, 'steamapps', 'common', 'Duck Game')
-        game_dir = exist_check(game_dir, 'Duck Game')
+        game_dir = exist_check(root, game_dir, 'Duck Game')
 
     hat_dir = os.path.join(os.getcwd(), 'hats')
-    hat_dir = exist_check(hat_dir, 'hat')
+    hat_dir = exist_check(root, hat_dir, 'hat')
 
     log.basicConfig(filename=log_name(),
                     level=log.INFO,
@@ -125,7 +123,7 @@ def main():
     log_now = dt.datetime.now().strftime('%d %b %Y - %H:%M:%S')
 
     log.info('Run Time: {}\n\n'.format(log_now))
-    if yes_no('Remove currently installed hats?\n\n'
+    if yes_no(root, 'Remove currently installed hats?\n\n'
               'Any currently installed hats with names matching\n'
               "new hats WILL be overwritten if you select 'No'."):
         log.info('Removing files:')
@@ -149,7 +147,7 @@ def main():
         exists = False
     log.info('\n\n--------------------------------------------------\n\n')
 
-    done_box()
+    done_box(root)
 
 if __name__ == '__main__':
     main()
