@@ -2,11 +2,11 @@
 from winreg import OpenKey, EnumValue, CloseKey, HKEY_LOCAL_MACHINE as HKLM
 from tkinter import Tk, filedialog, messagebox
 from shutil import copy2 as copy
+from datetime import datetime
 from sys import argv, exit
-import datetime as dt
 import logging as log
+from re import match
 import os
-import re
 
 
 def exist_check(root, location, name):
@@ -120,7 +120,7 @@ def main():
                     style='{',
                     format='{message}'
                     )
-    log_now = dt.datetime.now().strftime('%d %b %Y - %H:%M:%S')
+    log_now = datetime.now().strftime('%d %b %Y - %H:%M:%S')
 
     log.info('Run Time: {}\n\n'.format(log_now))
     if yes_no(root, 'Remove currently installed hats?\n\n'
@@ -128,7 +128,7 @@ def main():
               "new hats WILL be overwritten if you select 'No'."):
         log.info('Removing files:')
         for f in os.listdir(game_dir):
-            if re.match('.*\.hat', f) or f == 'hatcredits.txt':
+            if match('.*\.hat', f) or f == 'hatcredits.txt':
                 os.remove(os.path.join(game_dir, f))
                 log.info(os.path.join(game_dir, f))
     else:
