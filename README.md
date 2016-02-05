@@ -1,6 +1,6 @@
 Icon file used with permission of its original creator, [/u/BeardedBears](https://www.reddit.com/user/BeardedBears).
 
-Current hat pack [here](https://drive.google.com/open?id=0B36t-wx7lxZALUtScDJUOU9sWnM). No permission from creators, but credits are given.
+Current hat pack [here](https://drive.google.com/file/d/0B36t-wx7lxZAOE9hQnFCM2NhZFU). No permission from creators, but credits are given.
 
 Using hats.exe will remove any hats you currently have and will copy the ones from this pack over.
 hats.exe will work only if you have Duck Game installed in Steam's install directory.
