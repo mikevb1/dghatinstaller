@@ -1,9 +1,9 @@
 """Removes old hats in Duck Game directory, moves new ones over."""
 from winreg import OpenKey, EnumValue, CloseKey, HKEY_LOCAL_MACHINE as HKLM
 from tkinter import Tk, filedialog, messagebox
+from sys import argv, exit as exits
 from shutil import copy2 as copy
 from datetime import datetime
-from sys import argv, exit as exits
 import logging as log
 from re import match
 import os
@@ -56,7 +56,6 @@ def message_box(root, message, icon='info'):
                         message=message,
                         icon=icon
                         )
-    root.destroy()
 
 
 def yes_no(root, text, title=argv[0]):
@@ -89,7 +88,7 @@ def get_steam_dir():
     except FileNotFoundError:
         steam_reg_key = OpenKey(HKLM, 'SOFTWARE\\Valve\\Steam')
     except Exception:
-        return None
+        return ''
     steam_dir = EnumValue(steam_reg_key, 1)[1]
     CloseKey(steam_reg_key)
     return steam_dir
@@ -149,6 +148,8 @@ def main():
     log.info('\n\n--------------------------------------------------\n\n')
 
     message_box(root, 'All done!\nNew hats should be installed.')
+
+    root.destroy()
 
 if __name__ == '__main__':
     main()
