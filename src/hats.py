@@ -3,7 +3,7 @@ from winreg import OpenKey, EnumValue, CloseKey, HKEY_LOCAL_MACHINE as HKLM
 from tkinter import Tk, filedialog, messagebox
 from shutil import copy2 as copy
 from datetime import datetime
-from sys import argv, exit
+from sys import argv, exit as exits
 import logging as log
 from re import match
 import os
@@ -45,18 +45,18 @@ def folder_select(root, name):
                                      )
     if not folder:
         root.destroy()
-        exit(0)
+        exits(0)
     return folder
 
 
-def done_box(root):
-    """Display box saying program is done."""
+def message_box(root, message, icon='info'):
+    """Show tkinter message box with message and icon."""
     messagebox.showinfo(parent=root,
                         title=argv[0],
-                        message='All done.\nNew hats should be installed.'
+                        message=message,
+                        icon=icon
                         )
     root.destroy()
-    exit(0)
 
 
 def yes_no(root, text, title=argv[0]):
@@ -73,7 +73,7 @@ def yes_no(root, text, title=argv[0]):
     yesno = messagebox.askyesno(title, text)
     if yesno not in [True, False]:
         root.destroy()
-        exit(0)
+        exits(0)
     return yesno
 
 
@@ -88,8 +88,8 @@ def get_steam_dir():
         steam_reg_key = OpenKey(HKLM, 'SOFTWARE\\WOW6432Node\\Valve\\Steam')
     except FileNotFoundError:
         steam_reg_key = OpenKey(HKLM, 'SOFTWARE\\Valve\\Steam')
-    except:
-        return
+    except Exception:
+        return None
     steam_dir = EnumValue(steam_reg_key, 1)[1]
     CloseKey(steam_reg_key)
     return steam_dir
@@ -117,12 +117,11 @@ def main():
 
     log.basicConfig(filename=log_name(),
                     level=log.INFO,
-                    style='{',
-                    format='{message}'
+                    format='%(message)s'
                     )
     log_now = datetime.now().strftime('%d %b %Y - %H:%M:%S')
 
-    log.info('Run Time: {}\n\n'.format(log_now))
+    log.info('Run Time: %s\n\n', log_now)
     if yes_no(root, 'Remove currently installed hats?\n\n'
               'Any currently installed hats with names matching\n'
               "new hats WILL be overwritten if you select 'No'."):
@@ -141,13 +140,15 @@ def main():
         if os.path.isfile(destfile):
             exists = True
         copy(srcfile, destfile)
-        log.info('{} {} {}'.format(srcfile,
-                                   'OVERWRITING' if exists else '->',
-                                   destfile))
+        log.info('%s %s %s',
+                 srcfile,
+                 'OVERWRITING' if exists else '->',
+                 destfile
+                 )
         exists = False
     log.info('\n\n--------------------------------------------------\n\n')
 
-    done_box(root)
+    message_box(root, 'All done!\nNew hats should be installed.')
 
 if __name__ == '__main__':
     main()
