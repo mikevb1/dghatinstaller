@@ -9,10 +9,15 @@ from re import match
 import os
 
 
-def exist_check(root, location, name):
+# log.X where X is DEBUG, INFO, WARNING, ERROR, CRITICAL
+LOG_LEVEL = log.INFO
+
+
+def exist_check(root: Tk, location: str, name: str) -> str:
     """Check whether location exists and prompt for location if it does not.
 
     Arguments:
+    root -- Tk root window to bind to
     location -- location of folder found relative to program or from registry
     name -- name of folder, only used when location does not exist
 
@@ -28,10 +33,11 @@ def exist_check(root, location, name):
     return folder
 
 
-def folder_select(root, name):
+def folder_select(root: Tk, name: str) -> str:
     """Prompt to select folder.
 
     Arguments:
+    root -- Tk root window to bind to
     name -- name of folder, to be used in titlebar of window
 
     Result:
@@ -49,19 +55,28 @@ def folder_select(root, name):
     return folder
 
 
-def message_box(root, message, icon='info'):
-    """Show tkinter message box with message and icon."""
+def message_box(root: Tk, message: str,
+                title: str =argv[0], icon: str ='info') -> None:
+    """Show tkinter message box with message and icon.
+
+    Arguments:
+    root -- Tk root window to bind to
+    message -- message to be shown
+    title -- text displayed in titlebar
+    icon -- icon to be shown in ['info','warning','error','question']
+    """
     messagebox.showinfo(parent=root,
-                        title=argv[0],
+                        title=title,
                         message=message,
                         icon=icon
                         )
 
 
-def yes_no(root, text, title=argv[0]):
+def yes_no(root: Tk, text: str, title: str =argv[0]) -> str:
     """Display box asking yes or no.
 
     Arguments:
+    root -- Tk root window to bind to
     text -- text displayed in box
     title -- text displayed in titlebar
 
@@ -71,12 +86,13 @@ def yes_no(root, text, title=argv[0]):
     """
     yesno = messagebox.askyesno(title, text)
     if yesno not in [True, False]:
+        log.debug('yes_no error, answer: %s\n', yesno)
         root.destroy()
         exits(0)
     return yesno
 
 
-def get_steam_dir():
+def get_steam_dir() -> str:
     """Get steam install directory from registry.
 
     Result:
@@ -87,20 +103,28 @@ def get_steam_dir():
         steam_reg_key = OpenKey(HKLM, 'SOFTWARE\\WOW6432Node\\Valve\\Steam')
     except FileNotFoundError:
         steam_reg_key = OpenKey(HKLM, 'SOFTWARE\\Valve\\Steam')
-    except Exception:
+    except Exception as e:
+        log.debug('Registry error: %s\n', e)
         return ''
     steam_dir = EnumValue(steam_reg_key, 1)[1]
     CloseKey(steam_reg_key)
     return steam_dir
 
 
-def log_name(main=argv[0]):
+def log_name(main: str =argv[0]) -> str:
     """Take name of script and change extension to 'log'."""
     return os.path.splitext(main)[0]+'.log'
 
 
-def main():
+def main() -> None:
     """Remove any hats in game directory and copies new ones over."""
+    log.basicConfig(filename=log_name(),
+                    level=LOG_LEVEL,
+                    format='%(message)s'
+                    )
+    log_now = datetime.now().strftime('%d %b %Y - %H:%M:%S')
+    log.info('Run Time: %s\n\n', log_now)
+
     root = Tk()
     root.withdraw()
 
@@ -114,16 +138,15 @@ def main():
     hat_dir = os.path.join(os.getcwd(), 'hats')
     hat_dir = exist_check(root, hat_dir, 'hat')
 
-    log.basicConfig(filename=log_name(),
-                    level=log.INFO,
-                    format='%(message)s'
-                    )
-    log_now = datetime.now().strftime('%d %b %Y - %H:%M:%S')
+    log.debug('Steam dir: %s\nGame dir: %s\nHat dir: %s\n',
+              steam_dir,
+              game_dir,
+              hat_dir
+              )
 
-    log.info('Run Time: %s\n\n', log_now)
     if yes_no(root, 'Remove currently installed hats?\n\n'
-              'Any currently installed hats with names matching\n'
-              "new hats WILL be overwritten if you select 'No'."):
+                    'Any currently installed hats with names matching\n'
+                    "new hats WILL be overwritten if you select 'No'."):
         log.info('Removing files:')
         for f in os.listdir(game_dir):
             if match('.*\.hat', f) or f == 'hatcredits.txt':
