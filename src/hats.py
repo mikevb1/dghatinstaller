@@ -30,6 +30,7 @@ def exist_check(root: Tk, location: str, name: str) -> str:
             break
         else:
             folder = folder_select(root, name)
+    log.debug('%s: %s dir: %s\n', 'exist_check()', name, folder)
     return folder
 
 
@@ -52,6 +53,7 @@ def folder_select(root: Tk, name: str) -> str:
     if not folder:
         root.destroy()
         exits(0)
+    log.debug('%s: folder: %s\n', 'folder_select()', folder)
     return folder
 
 
@@ -86,7 +88,7 @@ def yes_no(root: Tk, text: str, title: str =argv[0]) -> str:
     """
     yesno = messagebox.askyesno(title, text)
     if yesno not in [True, False]:
-        log.debug('yes_no error, answer: %s\n', yesno)
+        log.critical('%s: answer: %s\n', 'yes_no()', yesno)
         root.destroy()
         exits(0)
     return yesno
@@ -104,7 +106,8 @@ def get_steam_dir() -> str:
     except FileNotFoundError:
         steam_reg_key = OpenKey(HKLM, 'SOFTWARE\\Valve\\Steam')
     except Exception as e:
-        log.debug('Registry error: %s\n', e)
+        log.warning('%s: Could not get Steam install location.\n', 'WARNING')
+        log.debug('%s: %s: Exception: %s', 'DEBUG', 'get_steam_dir()', e)
         return ''
     steam_dir = EnumValue(steam_reg_key, 1)[1]
     CloseKey(steam_reg_key)
@@ -168,7 +171,7 @@ def main() -> None:
                  destfile
                  )
         exists = False
-    log.info('\n\n--------------------------------------------------\n\n')
+    log.info('\n\n%s\n\n', '-'*100)
 
     message_box(root, 'All done!\nNew hats should be installed.')
 
