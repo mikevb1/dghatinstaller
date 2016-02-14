@@ -8,7 +8,6 @@ import logging as log
 from re import match
 import os
 
-
 # log.X where X is DEBUG, INFO, WARNING, ERROR, CRITICAL
 LOG_LEVEL = log.INFO
 
@@ -116,7 +115,7 @@ def get_steam_dir() -> str:
 
 def log_name(main: str =argv[0]) -> str:
     """Take name of script and change extension to 'log'."""
-    return os.path.splitext(main)[0]+'.log'
+    return os.path.splitext(main)[0] + '.log'
 
 
 def main() -> None:
@@ -171,7 +170,7 @@ def main() -> None:
                  destfile
                  )
         exists = False
-    log.info('\n\n%s\n\n', '-'*100)
+    log.info('\n\n%s\n\n', '-' * 100)
 
     message_box(root, 'All done!\nNew hats should be installed.')
 
